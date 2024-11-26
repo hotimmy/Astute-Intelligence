@@ -4,6 +4,7 @@ import librosa
 import collections
 bpm_history = collections.deque(maxlen=5)  # 儲存最近 5 個 BPM 值
 
+
 # 參數設置
 sr = 22050  # 音訊取樣率
 buffer_duration = 4  # 每次處理的音訊秒數
@@ -11,6 +12,7 @@ hop_length = 512  # FFT hop 長度
 threshold = 0.2  # 能量閾值，用來過濾無聲音訊段
 
 # 選擇音訊設備
+print(sd.query_devices())
 device_index = int(input("請輸入想要使用的音訊設備編號（根據 `sd.query_devices()` 的結果）："))
 
 
