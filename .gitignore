@@ -1,0 +1,156 @@
+
+.DS_Store
+1 Project/1.als
+1 Project/Ableton Project Info/Project8_1.cfg
+1 Project/Backup/1 \[2024-11-16 090444\].als
+1 Project/Backup/1 \[2024-11-16 165715\].als
+1 Project/Backup/1 \[2024-11-17 080516\].als
+1 Project/Backup/1 \[2024-11-17 222446\].als
+1 Project/Backup/1 \[2024-11-19 212142\].als
+1 Project/Backup/1 \[2024-11-19 213243\].als
+1 Project/Backup/1 \[2024-11-19 213709\].als
+1 Project/Backup/1 \[2024-11-19 214900\].als
+1 Project/Backup/1 \[2024-11-20 001647\].als
+1 Project/Backup/1 \[2024-11-20 141154\].als
+1 Project/Icon
+1 Project/Samples/Recorded/2-Audio 0001 \[2024-11-16 012610\].aif
+1 Project/Samples/Recorded/2-Audio 0001 \[2024-11-16 012610\].aif.asd
+1 Project/Samples/Recorded/2024-06-15 0001 \[2024-11-19 233306\].aif
+1 Project/Samples/Recorded/2024-06-15 0001 \[2024-11-19 233306\].aif.asd
+1 Project/Samples/Recorded/3-Audio 0001 \[2024-11-16 002214\].aif
+1 Project/Samples/Recorded/3-Audio 0001 \[2024-11-16 002214\].aif.asd
+1 Project/Samples/Recorded/3-Audio 0001 \[2024-11-19 203715\].aif
+1 Project/Samples/Recorded/3-Audio 0001 \[2024-11-19 203715\].aif.asd
+1 Project/Samples/Recorded/3-Audio 0001 \[2024-11-19 203737\].aif
+1 Project/Samples/Recorded/3-Audio 0001 \[2024-11-19 203737\].aif.asd
+1 Project/Samples/Recorded/3-Audio 0002 \[2024-11-16 002416\].aif
+1 Project/Samples/Recorded/3-Audio 0002 \[2024-11-16 002416\].aif.asd
+1 Project/Samples/Recorded/3-Audio 0003 \[2024-11-16 002610\].aif
+1 Project/Samples/Recorded/3-Audio 0003 \[2024-11-16 002610\].aif.asd
+1 Project/Samples/Recorded/3-Audio 0004 \[2024-11-16 002642\].aif
+1 Project/Samples/Recorded/3-Audio 0004 \[2024-11-16 002642\].aif.asd
+1 Project/Samples/Recorded/3-Audio 0004 \[2024-11-16 002644\].aif
+1 Project/Samples/Recorded/3-Audio 0004 \[2024-11-16 002644\].aif.asd
+__pycache__/ArtnetUtils.cpython-311.pyc
+__pycache__/TArtnet.cpython-311.pyc
+audio1.m4a
+audio_fast.mp3
+audio_slow.mp3
+BPM/audio1.m4a
+BPM/audio_fast.mp3
+BPM/audio_slow.mp3
+data/.DS_Store
+data/2024-09-14.mp3
+data/2024-10-26.mp3
+data/effect10（0%）/.DS_Store
+data/effect10（0%）/10-1.mp3
+data/effect10（0%）/10-2.mp3
+data/effect10（0%）/10-3.mp3
+data/effect10（0%）/10-4.mp3
+data/effect10（0%）/10-5.mp3
+data/effect10（0%）/10-6.mp3
+data/effect1（漸進漸出bpm）/1-1.mp3
+data/effect1（漸進漸出bpm）/1-2.mp3
+data/effect1（漸進漸出bpm）/1-3.mp3
+data/effect1（漸進漸出bpm）/1-4.mp3
+data/effect1（漸進漸出bpm）/1-5.mp3
+data/effect1（漸進漸出bpm）/1-6.mp3
+data/effect1（漸進漸出bpm）/1-7.mp3
+data/effect2（Can-Can bpm）/.DS_Store
+data/effect2（Can-Can bpm）/2-1.mp3
+data/effect2（Can-Can bpm）/2-2.mp3
+data/effect2（Can-Can bpm）/2-3.mp3
+data/effect2（Can-Can bpm）/2-4.mp3
+data/effect2（Can-Can bpm）/2-5.mp3
+data/effect2（Can-Can bpm）/2-6.mp3
+data/effect2（Can-Can bpm）/2-7.mp3
+data/effect3（Can-Can 柔）/.DS_Store
+data/effect3（Can-Can 柔）/3-1.mp3
+data/effect3（Can-Can 柔）/3-10.mp3
+data/effect3（Can-Can 柔）/3-11.mp3
+data/effect3（Can-Can 柔）/3-12.mp3
+data/effect3（Can-Can 柔）/3-13.mp3
+data/effect3（Can-Can 柔）/3-14.mp3
+data/effect3（Can-Can 柔）/3-15.mp3
+data/effect3（Can-Can 柔）/3-16.mp3
+data/effect3（Can-Can 柔）/3-2.mp3
+data/effect3（Can-Can 柔）/3-3.mp3
+data/effect3（Can-Can 柔）/3-4.mp3
+data/effect3（Can-Can 柔）/3-5.mp3
+data/effect3（Can-Can 柔）/3-6.mp3
+data/effect3（Can-Can 柔）/3-7.mp3
+data/effect3（Can-Can 柔）/3-8.mp3
+data/effect3（Can-Can 柔）/3-9.mp3
+data/effect4（Rain bpm）/.DS_Store
+data/effect4（Rain bpm）/4-1.mp3
+data/effect4（Rain bpm）/4-2.mp3
+data/effect4（Rain bpm）/4-3.mp3
+data/effect4（Rain bpm）/4-4.mp3
+data/effect4（Rain bpm）/4-5.mp3
+data/effect4（Rain bpm）/4-6.mp3
+data/effect4（Rain bpm）/4-7.mp3
+data/effect5（快閃）/.DS_Store
+data/effect5（快閃）/5-1.mp3
+data/effect5（快閃）/5-10.mp3
+data/effect5（快閃）/5-11.mp3
+data/effect5（快閃）/5-12.mp3
+data/effect5（快閃）/5-13.mp3
+data/effect5（快閃）/5-2.mp3
+data/effect5（快閃）/5-3.mp3
+data/effect5（快閃）/5-4.mp3
+data/effect5（快閃）/5-5.mp3
+data/effect5（快閃）/5-6.mp3
+data/effect5（快閃）/5-7.mp3
+data/effect5（快閃）/5-8.mp3
+data/effect5（快閃）/5-9.mp3
+data/effect6（白光）/.DS_Store
+data/effect6（白光）/6-1.mp3
+data/effect6（白光）/6-2.mp3
+data/effect6（白光）/6-3.mp3
+data/effect6（白光）/6-4.mp3
+data/effect6（白光）/6-5.mp3
+data/effect6（白光）/6-6.mp3
+data/effect6（白光）/6-7.mp3
+data/effect7（漸進漸出 慢）/.DS_Store
+data/effect7（漸進漸出 慢）/7-1.mp3
+data/effect7（漸進漸出 慢）/7-10.mp3
+data/effect7（漸進漸出 慢）/7-11.mp3
+data/effect7（漸進漸出 慢）/7-12.mp3
+data/effect7（漸進漸出 慢）/7-2.mp3
+data/effect7（漸進漸出 慢）/7-3.mp3
+data/effect7（漸進漸出 慢）/7-4.mp3
+data/effect7（漸進漸出 慢）/7-5.mp3
+data/effect7（漸進漸出 慢）/7-6.mp3
+data/effect7（漸進漸出 慢）/7-7.mp3
+data/effect7（漸進漸出 慢）/7-8.mp3
+data/effect7（漸進漸出 慢）/7-9.mp3
+data/effect8（漸進漸出 快）/.DS_Store
+data/effect8（漸進漸出 快）/8-1.mp3
+data/effect8（漸進漸出 快）/8-2.mp3
+data/effect8（漸進漸出 快）/8-3.mp3
+data/effect8（漸進漸出 快）/8-4.mp3
+data/effect8（漸進漸出 快）/8-5.mp3
+data/effect8（漸進漸出 快）/8-6.mp3
+data/effect9（100%）/.DS_Store
+data/effect9（100%）/9-1.mp3
+data/effect9（100%）/9-10.mp3
+data/effect9（100%）/9-11.mp3
+data/effect9（100%）/9-12.mp3
+data/effect9（100%）/9-13.mp3
+data/effect9（100%）/9-14.mp3
+data/effect9（100%）/9-15.mp3
+data/effect9（100%）/9-16.mp3
+data/effect9（100%）/9-17.mp3
+data/effect9（100%）/9-2.mp3
+data/effect9（100%）/9-3.mp3
+data/effect9（100%）/9-4.mp3
+data/effect9（100%）/9-5.mp3
+data/effect9（100%）/9-6.mp3
+data/effect9（100%）/9-7.mp3
+data/effect9（100%）/9-8.mp3
+data/effect9（100%）/9-9.mp3
+tempCodeRunnerFile.py
+1 Project/Icon
+audio1.m4a
+audio_fast.mp3
+audio_slow.mp3
