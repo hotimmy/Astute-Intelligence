@@ -1,4 +1,4 @@
-from TArtnet import StupidArtnet
+from TestArtnet import StupidArtnet
 from SignalGenerator import SignalGenerator as sg
 import time
 import sys
@@ -11,6 +11,8 @@ packet_size = 512             # 資料包大小
 frame_rate = 40               # 更新頻率 (Hz)
 
 BPM = 120
+
+sg = sg()
 
 # 創建 StupidArtnet 物件
 artnet = StupidArtnet(target_ip, universe, packet_size, frame_rate, True, True)
@@ -84,14 +86,14 @@ try:
                 artnet.set_single_value(i+3, 35)
 
 
-        elif user_input == "pon":
+        elif user_input == "7":
             print("P on")
             for i in [P1,P2,P3,P4,P5,P6]:
                 artnet.set_single_value(i, 255)
             effect = False
 
-        elif user_input == "pon":
-            print("P on")
+        elif user_input == "8":
+            print("P off")
             for i in [P1,P2,P3,P4,P5,P6]:
                 artnet.set_single_value(i, 0)
             effect = False
@@ -116,7 +118,27 @@ try:
             sg.set_generator(P6, "square", BPM, frame_rate, offset=BPM/60)
             effect = True
 
+        elif user_input == "2":
+            #Can-Can 柔 bpm
+            sg.set_generator(P1, "sin", BPM, frame_rate, offset=0)
+            sg.set_generator(P2, "sin", BPM, frame_rate, offset=0)
+            sg.set_generator(P3, "sin", BPM, frame_rate, offset=0)
+            sg.set_generator(P4, "sin", BPM, frame_rate, offset=BPM/60)
+            sg.set_generator(P5, "sin", BPM, frame_rate, offset=BPM/60)
+            sg.set_generator(P6, "sin", BPM, frame_rate, offset=BPM/60) 
+            effect = True
+
         elif user_input == "3":
+            #Rain bpm
+            sg.set_generator(P1, "sin", BPM, frame_rate, offset=0)
+            sg.set_generator(P2, "sin", BPM, frame_rate, offset=0)
+            sg.set_generator(P3, "sin", BPM, frame_rate, offset=0)
+            sg.set_generator(P4, "sin", BPM, frame_rate, offset=BPM/60)
+            sg.set_generator(P5, "sin", BPM, frame_rate, offset=BPM/60)
+            sg.set_generator(P6, "sin", BPM, frame_rate, offset=BPM/60) 
+            effect = True
+
+        elif user_input == "4":
             #快閃
             sg.set_generator(P1, "sin", 200, frame_rate, offset=0)
             sg.set_generator(P2, "sin", 200, frame_rate, offset=0.1)
@@ -126,15 +148,26 @@ try:
             sg.set_generator(P6, "sin", 200, frame_rate, offset=0.5) 
             effect = True
         
-        elif user_input == "3":
+        elif user_input == "5":
             #漸進漸出 慢
             slow = 60
             sg.set_generator(P1, "sin", slow, frame_rate, offset=0)
-            sg.set_generator(P2, "sin", 60, frame_rate, offset=0.1)
-            sg.set_generator(P3, "sin", 60, frame_rate, offset=0.2)
-            sg.set_generator(P4, "sin", 60, frame_rate, offset=0.3)
-            sg.set_generator(P5, "sin", 60, frame_rate, offset=0.4)
-            sg.set_generator(P6, "sin", 60, frame_rate, offset=0.5) 
+            sg.set_generator(P2, "sin", slow, frame_rate, offset=0.1)
+            sg.set_generator(P3, "sin", slow, frame_rate, offset=0.2)
+            sg.set_generator(P4, "sin", slow, frame_rate, offset=0.3)
+            sg.set_generator(P5, "sin", slow, frame_rate, offset=0.4)
+            sg.set_generator(P6, "sin", slow, frame_rate, offset=0.5) 
+            effect = True
+
+        elif user_input == "6":
+            #漸進漸出 快
+            fast = 80
+            sg.set_generator(P1, "sin", fast, frame_rate, offset=0)
+            sg.set_generator(P2, "sin", fast, frame_rate, offset=0.1)
+            sg.set_generator(P3, "sin", fast, frame_rate, offset=0.2)
+            sg.set_generator(P4, "sin", fast, frame_rate, offset=0.3)
+            sg.set_generator(P5, "sin", fast, frame_rate, offset=0.4)
+            sg.set_generator(P6, "sin", fast, frame_rate, offset=0.5) 
             effect = True
         
         if effect == True:
