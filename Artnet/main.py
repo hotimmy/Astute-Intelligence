@@ -10,7 +10,7 @@ universe = 0                  # Universe 編號
 packet_size = 512             # 資料包大小
 frame_rate = 40               # 更新頻率 (Hz)
 
-BPM = 120
+BPM = 60
 
 sg = sg()
 
@@ -113,9 +113,9 @@ try:
             sg.set_generator(P1, "square", BPM, frame_rate, offset=0)
             sg.set_generator(P2, "square", BPM, frame_rate, offset=0)
             sg.set_generator(P4, "square", BPM, frame_rate, offset=0)
-            sg.set_generator(P3, "square", BPM, frame_rate, offset=BPM/60)
-            sg.set_generator(P5, "square", BPM, frame_rate, offset=BPM/60)
-            sg.set_generator(P6, "square", BPM, frame_rate, offset=BPM/60)
+            sg.set_generator(P3, "square", BPM, frame_rate, offset=60/BPM)
+            sg.set_generator(P5, "square", BPM, frame_rate, offset=60/BPM)
+            sg.set_generator(P6, "square", BPM, frame_rate, offset=60/BPM)
             effect = True
 
         elif user_input == "2":
@@ -123,9 +123,9 @@ try:
             sg.set_generator(P1, "sin", BPM, frame_rate, offset=0)
             sg.set_generator(P2, "sin", BPM, frame_rate, offset=0)
             sg.set_generator(P3, "sin", BPM, frame_rate, offset=0)
-            sg.set_generator(P4, "sin", BPM, frame_rate, offset=BPM/60)
-            sg.set_generator(P5, "sin", BPM, frame_rate, offset=BPM/60)
-            sg.set_generator(P6, "sin", BPM, frame_rate, offset=BPM/60) 
+            sg.set_generator(P4, "sin", BPM, frame_rate, offset=30/BPM)
+            sg.set_generator(P5, "sin", BPM, frame_rate, offset=30/BPM)
+            sg.set_generator(P6, "sin", BPM, frame_rate, offset=30/BPM) 
             effect = True
 
         elif user_input == "3":
@@ -140,12 +140,12 @@ try:
 
         elif user_input == "4":
             #快閃
-            sg.set_generator(P1, "sin", 200, frame_rate, offset=0)
-            sg.set_generator(P2, "sin", 200, frame_rate, offset=0.1)
-            sg.set_generator(P3, "sin", 200, frame_rate, offset=0.2)
-            sg.set_generator(P4, "sin", 200, frame_rate, offset=0.3)
-            sg.set_generator(P5, "sin", 200, frame_rate, offset=0.4)
-            sg.set_generator(P6, "sin", 200, frame_rate, offset=0.5) 
+            sg.set_generator(P1, "square", 200, frame_rate, offset=0)
+            sg.set_generator(P2, "square", 200, frame_rate, offset=0.1)
+            sg.set_generator(P3, "square", 200, frame_rate, offset=0.2)
+            sg.set_generator(P4, "square", 200, frame_rate, offset=0.3)
+            sg.set_generator(P5, "square", 200, frame_rate, offset=0.4)
+            sg.set_generator(P6, "square", 200, frame_rate, offset=0.5) 
             effect = True
         
         elif user_input == "5":

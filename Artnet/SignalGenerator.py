@@ -4,7 +4,7 @@ from collections import defaultdict
 class SignalGenerator:
     def __init__(self):
         # 儲存每個 address 的生成器狀態
-        self.generators = defaultdict(lambda: {"time": 0, "offset": 0, "BPM": 120, "HZ": 1, "signal_type": "sin"})
+        self.generators = defaultdict(lambda: {"time": 0, "offset": 0, "BPM": 120, "HZ": 40, "signal_type": "sin"})
 
     def set_generator(self, address, signal_type, BPM, frame_rate, offset=0):
         """
@@ -39,7 +39,7 @@ class SignalGenerator:
         # 計算 sin 波頻率 (Hz) 基於 BPM
         frequency = BPM / 60  # BPM 轉換為每秒的週期數
         period = 1 / frequency  # 一個週期的時間長度 (秒)
-        angular_frequency = 2 * math.pi * frequency /2  # 角速度 (rad/s)
+        angular_frequency = 2 * math.pi * frequency  # 角速度 (rad/s)
 
         if signal_type == "sin":
             # 計算 sin 波值 (-1 ~ 1)，並映射到 0 ~ 255
@@ -47,7 +47,8 @@ class SignalGenerator:
             scaled_value = int((signal_value + 1) / 2 * 255)
         elif signal_type == "square":
             # 計算當前時間在一個週期中的位置
-            cycle_position = (time % period) / period
+            cycle_position = (time % (period * 2)) / (period * 2)
+            #print(cycle_position)
             # 根據位置決定高低電平
             scaled_value = 255 if cycle_position < 0.5 else 0
         else:
@@ -63,13 +64,13 @@ if __name__ == "__main__":
     sg = SignalGenerator()
 
     # 初始化三個不同的 signal generator
-    sg.set_generator("addr1", "sin", 120, 1, offset=0)    # 120 BPM, sin 波, 無偏移
-    sg.set_generator("addr2", "square", 90, 1, offset=0.5)  # 90 BPM, 方波, 偏移 0.5 秒
-    sg.set_generator("addr3", "sin", 60, 1, offset=1)     # 60 BPM, sin 波, 偏移 1 秒
+    #sg.set_generator("addr1", "sin", 120, 1, offset=0)    # 120 BPM, sin 波, 無偏移
+    sg.set_generator("addr2", "square", 61, 40, offset=0)  # 90 BPM, 方波, 偏移 0.5 秒
+    #sg.set_generator("addr3", "sin", 60, 1, offset=1)     # 60 BPM, sin 波, 偏移 1 秒
 
     # 模擬呼叫信號輸出
     print("Signal outputs:")
-    for _ in range(10):
-        print(f"addr1 (sin): {sg.signal_generator('addr1')}")
+    for _ in range(80):
+        #print(f"addr1 (sin): {sg.signal_generator('addr1')}")
         print(f"addr2 (square): {sg.signal_generator('addr2')}")
-        print(f"addr3 (sin): {sg.signal_generator('addr3')}")
+        #print(f"addr3 (sin): {sg.signal_generator('addr3')}")

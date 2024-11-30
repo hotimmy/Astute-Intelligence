@@ -43,7 +43,7 @@ class StupidArtnet():
 
 
     def show(self):
-        print("")
+        None
 
 
     def close(self):
