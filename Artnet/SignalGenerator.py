@@ -39,7 +39,7 @@ class SignalGenerator:
         # 計算 sin 波頻率 (Hz) 基於 BPM
         frequency = BPM / 60  # BPM 轉換為每秒的週期數
         period = 1 / frequency  # 一個週期的時間長度 (秒)
-        angular_frequency = 2 * math.pi * frequency  # 角速度 (rad/s)
+        angular_frequency = 2 * math.pi * frequency / 2  # 角速度 (rad/s)
 
         if signal_type == "sin":
             # 計算 sin 波值 (-1 ~ 1)，並映射到 0 ~ 255
@@ -51,6 +51,18 @@ class SignalGenerator:
             #print(cycle_position)
             # 根據位置決定高低電平
             scaled_value = 255 if cycle_position < 0.5 else 0
+        elif signal_type == "rain":
+            # 計算當前時間在一個週期中的位置
+            cycle_position = (time % (period * 2)) / (period * 2)
+            #print(cycle_position)
+            # 根據位置決定高低電平
+            if cycle_position < 0.16:
+                scaled_value = 255
+            elif cycle_position <= 0.64:
+                scaled_value = int(255 * (0.64 - cycle_position) / (0.64 - 0.16))
+            else:
+                scaled_value = 0
+
         else:
             raise ValueError(f"Unsupported signal type: {signal_type}")
 
