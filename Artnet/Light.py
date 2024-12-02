@@ -1,4 +1,4 @@
-from TArtnet import StupidArtnet
+from TestArtnet import StupidArtnet
 from SignalGenerator import SignalGenerator as sg
 import time
 import sys

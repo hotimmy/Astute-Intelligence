@@ -89,7 +89,8 @@ class StupidArtnet():
 
 
     def set_single_value(self, address, value):
-        print("address:" , address , "value:" , value)
+        #print("address:" , address , "value:" , value)
+        None
 
 
     # AUX Function #
