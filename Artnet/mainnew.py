@@ -1,4 +1,4 @@
-from TArtnet import StupidArtnet
+from TestArtnet import StupidArtnet
 from SignalGenerator import SignalGenerator as sg
 import time
 import sys
@@ -14,7 +14,7 @@ import cv2
 from tensorflow import keras
 
 # Initialize Art-Net and Signal Generator
-target_ip = '172.20.10.5'  # Target IP
+target_ip = '169.254.44.100'  # Target IP
 universe = 0                  # Universe number
 packet_size = 512             # Packet size
 frame_rate = 40               # Frame rate (Hz)
@@ -98,6 +98,7 @@ def AIpredict(model, name):
     global Soundarrays
     global output
     output = -1
+    predictions = []
     Soundarrays = []
     PredictData = []
     print("AI start")
@@ -107,12 +108,19 @@ def AIpredict(model, name):
                 PredictData.append(Soundarrays)
             elif len(PredictData) == 4:
                 PredictData = np.array((PredictData[1], PredictData[2], PredictData[3], Soundarrays))
-                #prediction = model.predict(PredictData)
                 prediction = model.predict(PredictData,verbose=0)
                 prediction = np.add(np.add(np.add(prediction[0], prediction[1]), prediction[2]), prediction[3])
-                output = prediction.tolist().index(np.max(prediction))
+                prediction_num = prediction.tolist().index(np.max(prediction))
+                if len(prediction) < 3:
+                	predictions.append(prediction)
+                else:
+                	predictions = [predictions[1],predictions[2],prediction]
+                
+                if predictions[0] == predictions[1] and predictions[1] == predictions[2]:
+                	output = prediction.tolist().index(np.max(prediction))
+                
                 #print(output)
-        
+
 
 def audio_callback(indata, frames, time, status):
     global dataNow
@@ -150,17 +158,13 @@ def control_lights():
     artnet.start()
     artnet.set(packet)
     effect = False
-    for i in [P1,P2,P3,P4,P5,P6]:
-        artnet.set_single_value(i+1, 251)
-        artnet.set_single_value(i+2, 179)
-        artnet.set_single_value(i+3, 35)
     while True:
 
         if str(output) == user_input:
             pass
         else:
             user_input = str(output) 
-        
+
             if user_input =="bon":
                 for i in [B1,B2,B3]:
                     artnet.set_single_value(i,255)
@@ -262,7 +266,7 @@ def control_lights():
                 sg.set_generator(P5, "square", flash, frame_rate, offset=0.4)
                 sg.set_generator(P6, "square", flash, frame_rate, offset=0.5) 
                 effect = True
-            
+
             elif user_input == "5":
                 #漸進漸出 慢
                 print("6 漸進漸出 慢")
@@ -301,11 +305,11 @@ def control_lights():
             else:
                 #print("No output")
                 None
-            
+
         if effect == True:
             for i in [P1,P2,P3,P4,P5,P6]:
                 artnet.set_single_value(i,sg.signal_generator(i))
-        
+
         # 保持40Hz頻率
         artnet.show()
         time.sleep(1 / frame_rate)
