@@ -90,6 +90,7 @@ def ProcessData(nameFunc):
     dataNow = []
     while True:
         if type(dataNow) == np.ndarray:
+            print("Process data")
             Datacache = dataNow
             feature = get_feature(Datacache)
             Soundarrays = feature
@@ -111,31 +112,33 @@ def AIpredict(model, name):
                 prediction = model.predict(PredictData,verbose=0)
                 prediction = np.add(np.add(np.add(prediction[0], prediction[1]), prediction[2]), prediction[3])
                 output = prediction.tolist().index(np.max(prediction))
-                #print(output)
+                print(output)
         
 
 def audio_callback(indata, frames, time, status):
     global dataNow
+    global bpm_buffer
     dataNow = np.reshape(indata, [indata.shape[0]])
+    audio_data = indata[:, 0]
+    bpm_buffer.extend(audio_data)
 
 def detect_beats(audio_buffer):
     tempo, beats = librosa.beat.beat_track(y=audio_buffer, sr=sr, hop_length=hop_length)
     return tempo, beats
 
 def BPMProcessor():
+    global BPM
     bpm_buffer = collections.deque(maxlen=int(sr * buffer_duration2))  # Buffer for BPM detection
     while True:
         if len(bpm_buffer) == int(sr * buffer_duration2):  # Ensure enough data is present
             audio_data = np.array(bpm_buffer)
-            tempo, beats = detect_beats(audio_data)
-            print(f"Detected BPM: {tempo}")
+            #tempo, beats = detect_beats(audio_data)
+            #print(f"Detected BPM: {tempo}")
+            BPM = 120
+
         else:
             continue  # Wait until enough data is available
 
-def audio_callback_for_BPM(indata, frames, time, status):
-    global bpm_buffer
-    audio_data = indata[:, 0]
-    bpm_buffer.extend(audio_data)
 
 def check_input():
     if select.select([sys.stdin], [], [], 0)[0]:
@@ -144,9 +147,10 @@ def check_input():
 
 def control_lights():
     global output
+    global BPM
     output = -1
     user_input = -1
-    BPM = 120
+    #BPM = 120
     artnet.start()
     artnet.set(packet)
     effect = False
@@ -313,13 +317,13 @@ def control_lights():
 # Threading setup
 thread1 = threading.Thread(target=ProcessData, args=("Thread A",))
 thread2 = threading.Thread(target=AIpredict, args=(network, "Thread B"))
-#thread3 = threading.Thread(target=BPMProcessor, args=())
+thread3 = threading.Thread(target=BPMProcessor, args=())
 thread4 = threading.Thread(target=control_lights, args=())
 
 # Start threads
 thread1.start()
 thread2.start()
-#thread3.start()
+thread3.start()
 thread4.start()
 
 # Real-time audio recording and processing
@@ -332,10 +336,3 @@ with sd.InputStream(callback=audio_callback, channels=1, samplerate=sr, blocksiz
     except KeyboardInterrupt:
         print("Real-time audio processing stopped.")
 
-with sd.InputStream(callback=audio_callback_for_BPM, channels=1, samplerate=sr, blocksize=int(sr * buffer_duration2), device=device_index):
-    print("Real-time audio processing started. Press Ctrl+C to stop.")
-    try:
-        while True:
-            sd.sleep(1000)
-    except KeyboardInterrupt:
-        print("Real-time audio processing stopped.")

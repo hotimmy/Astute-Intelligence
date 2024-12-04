@@ -6,7 +6,7 @@ bpm_history = collections.deque(maxlen=5)  # 儲存最近 5 個 BPM 值
 
 
 # 參數設置
-sr = 22050  # 音訊取樣率
+sr = 320000  # 音訊取樣率
 buffer_duration = 4  # 每次處理的音訊秒數
 hop_length = 512  # FFT hop 長度
 threshold = 0.2  # 能量閾值，用來過濾無聲音訊段

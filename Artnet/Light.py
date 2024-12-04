@@ -5,12 +5,12 @@ import sys
 import select
 
 # 初始化設定
-target_ip = '10.113.4.3'  # 目標 IP
+target_ip = '172.20.10.13'  # 目標 IP
 universe = 0                  # Universe 編號
 packet_size = 512             # 資料包大小
 frame_rate = 40               # 更新頻率 (Hz)
 
-BPM = 120
+BPM = 144
 
 sg = sg()
 
