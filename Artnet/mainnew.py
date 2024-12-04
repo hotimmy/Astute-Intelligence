@@ -1,4 +1,4 @@
-from TestArtnet import StupidArtnet
+from TArtnet import StupidArtnet
 from SignalGenerator import SignalGenerator as sg
 import time
 import sys
@@ -14,7 +14,7 @@ import cv2
 from tensorflow import keras
 
 # Initialize Art-Net and Signal Generator
-target_ip = '169.254.44.100'  # Target IP
+target_ip = '172.20.10.13'  # Target IP
 universe = 0                  # Universe number
 packet_size = 512             # Packet size
 frame_rate = 40               # Frame rate (Hz)
@@ -66,23 +66,23 @@ bpm_buffer = collections.deque(maxlen=int(sr * buffer_duration2))  # Buffer for 
 
 # Feature extraction functions (MFCC, MelSpectrogram, etc.)
 def GetMFCC(y):
-    return np.array(librosa.feature.mfcc(y=y, sr=320000))
+    return np.array(librosa.feature.mfcc(y=y, sr=320000)) #給0.3秒的音訊 得到位元率32000的頻譜圖
 
 def GetMelspectrogram(y):
-    return np.array(librosa.feature.melspectrogram(y=y, sr=320000))
+    return np.array(librosa.feature.melspectrogram(y=y, sr=320000)) #給0.3秒的音訊 得到位元率32000的頻譜圖
 
 def GetChromaVector(y):
-    return np.array(librosa.feature.chroma_stft(y=y, sr=320000))
+    return np.array(librosa.feature.chroma_stft(y=y, sr=320000)) #給0.3秒的音訊 得到位元率32000的光譜圖
 
 def GetTonnetz(y):
-    return np.array(librosa.feature.tonnetz(y=y, sr=320000), dtype='float32')
+    return np.array(librosa.feature.tonnetz(y=y, sr=320000), dtype='float32') #給0.3秒的音訊 得到位元率32000的音調圖
 
-def get_feature(y):
+def get_feature(y): 
     mfcc = GetMFCC(y)
     melspectrogram = GetMelspectrogram(y)
     chroma = GetChromaVector(y)
     tntz = GetTonnetz(y)
-    return cv2.cvtColor(np.concatenate((mfcc, melspectrogram, chroma, tntz)), cv2.COLOR_GRAY2BGR)
+    return cv2.cvtColor(np.concatenate((mfcc, melspectrogram, chroma, tntz)), cv2.COLOR_GRAY2BGR) #根據上述圖片 直接將四張圖拼起來 曲得特徵圖
 
 def ProcessData(nameFunc):
     global Soundarrays
@@ -90,7 +90,7 @@ def ProcessData(nameFunc):
     dataNow = []
     while True:
         if type(dataNow) == np.ndarray:
-            Datacache = dataNow
+            Datacache = dataNow #防止處理時 dataNow 變更資料
             feature = get_feature(Datacache)
             Soundarrays = feature
 
@@ -106,18 +106,20 @@ def AIpredict(model, name):
         if type(Soundarrays) == np.ndarray:
             if len(PredictData) < 4:
                 PredictData.append(Soundarrays)
-            elif len(PredictData) == 4:
-                PredictData = np.array((PredictData[1], PredictData[2], PredictData[3], Soundarrays))
+            elif len(PredictData) == 4: #開始預測
+                PredictData = np.array((PredictData[1], PredictData[2], PredictData[3], Soundarrays)) #PredictData 更新
                 prediction = model.predict(PredictData,verbose=0)
-                prediction = np.add(np.add(np.add(prediction[0], prediction[1]), prediction[2]), prediction[3])
-                prediction_num = prediction.tolist().index(np.max(prediction))
-                if len(prediction) < 3:
-                	predictions.append(prediction)
-                else:
-                	predictions = [predictions[1],predictions[2],prediction]
+                prediction = np.add(np.add(np.add(prediction[0], prediction[1]), prediction[2]), prediction[3]) #把機率值加起來
+                prediction_num = prediction.tolist().index(np.max(prediction)) #取得最大項
+                if len(predictions) < 6:
+                    predictions.append(prediction_num)
+                    #print(predictions)
+                elif len(predictions) == 6:
+                    #print(predictions)
+                    predictions = [predictions[1],predictions[2],predictions[3],predictions[4],predictions[5],prediction_num]
                 
-                if predictions[0] == predictions[1] and predictions[1] == predictions[2]:
-                	output = prediction.tolist().index(np.max(prediction))
+                    if predictions[0] == predictions[1] and predictions[1] == predictions[2] and predictions[2] == predictions[3] and predictions[3] == predictions[4] and predictions[4] == predictions[5]:
+                	    output = prediction_num
                 
                 #print(output)
 
@@ -158,6 +160,10 @@ def control_lights():
     artnet.start()
     artnet.set(packet)
     effect = False
+    for i in [P1,P2,P3,P4,P5,P6]:
+        artnet.set_single_value(i+1, 251)
+        artnet.set_single_value(i+2, 179)
+        artnet.set_single_value(i+3, 35)
     while True:
 
         if str(output) == user_input:

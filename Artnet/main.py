@@ -14,7 +14,7 @@ import cv2
 from tensorflow import keras
 
 # Initialize Art-Net and Signal Generator
-target_ip = '172.20.10.5'  # Target IP
+target_ip = '172.20.10.13'  # Target IP
 universe = 0                  # Universe number
 packet_size = 512             # Packet size
 frame_rate = 40               # Frame rate (Hz)
