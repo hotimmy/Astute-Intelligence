@@ -1,10 +1,10 @@
-from TArtnet import StupidArtnet
+from TestArtnet import StupidArtnet
 from SignalGenerator import SignalGenerator as sg
 import time
 import sys
 import select
 import threading
-from tensorflow.keras.models import load_model
+
 #from keras.saving.save import load_model
 import sounddevice as sd
 import numpy as np
@@ -12,12 +12,12 @@ import librosa
 import collections
 import cv2
 from tensorflow import keras
-
 # Initialize Art-Net and Signal Generator
 target_ip = '172.20.10.13'  # Target IP
 universe = 0                  # Universe number
 packet_size = 512             # Packet size
 frame_rate = 40               # Frame rate (Hz)
+
 
 
 sg = sg()
@@ -42,10 +42,11 @@ P1, P2, P3, P4, P5, P6 = 33, 49, 65, 81, 97, 113
 #network = load_model(AIpath)
 
 # Initialize the neural network
-AIpath = input("Enter AI file path:").strip()
+AIpath = input("Enter AI file path:").strip('"')
 try:
     network = keras.models.Sequential()
-    network = load_model(AIpath)
+    network.predict(np.zeros((3,3,3)))
+    network = keras.models.load_model(AIpath)
 except Exception as e:
     print(f"Error loading model: {e}")
     sys.exit(1)
@@ -62,6 +63,18 @@ hop_length = 512  # FFT hop length
 threshold = 0.2  # Energy threshold for filtering silent segments
 dataNow = []
 Soundarrays = []
+def isStart(indata, frames, time, status):
+    global started
+    cacheStart = librosa.feature.mfcc(y=indata, sr=sr)
+    started = indata
+with sd.InputStream(callback=isStart, channels=1, samplerate=sr, blocksize=int(sr * buffer_duration1), device=device_index):
+    global started
+    started = -1
+    print("Starting Librosa services...")
+    while True:
+        if type(started) == np.ndarray:
+            print("Librosa started.")
+            break
 
 
 
@@ -117,7 +130,7 @@ def AIpredict(model, name):
                     predictions.append(prediction_num)
                     #print(predictions)
                 elif len(predictions) == 6:
-                    #print(predictions)
+                    print(predictions)
                     predictions = [predictions[1],predictions[2],predictions[3],predictions[4],predictions[5],prediction_num]
                 
                     if predictions[0] == predictions[1] and predictions[1] == predictions[2] and predictions[2] == predictions[3] and predictions[3] == predictions[4] and predictions[4] == predictions[5]:
