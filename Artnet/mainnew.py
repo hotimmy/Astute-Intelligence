@@ -63,6 +63,7 @@ hop_length = 512  # FFT hop length
 threshold = 0.2  # Energy threshold for filtering silent segments
 dataNow = []
 Soundarrays = []
+
 def isStart(indata, frames, time, status):
     global started
     cacheStart = librosa.feature.mfcc(y=indata, sr=sr)
@@ -75,7 +76,6 @@ with sd.InputStream(callback=isStart, channels=1, samplerate=sr, blocksize=int(s
         if type(started) == np.ndarray:
             print("Librosa started.")
             break
-
 
 
 # Feature extraction functions (MFCC, MelSpectrogram, etc.)
