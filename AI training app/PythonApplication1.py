@@ -2,11 +2,11 @@ import re
 import math
 import os
 from unittest import result
-import cuda.cuda
+#import cuda.cuda
 from keras.losses import binary_crossentropy
 from keras.models import Sequential, load_model, save_model
 from keras.optimizers import SGD, Adam
-from keras.optimizers.schedules.learning_rate_schedule import ExponentialDecay
+from tensorflow.keras.optimizers.schedules import ExponentialDecay
 import numpy as np
 from tensorflow import keras as tfkrs
 from keras.layers import Normalization, Conv1D, Conv2D, Dense, Dropout, Flatten, GlobalAveragePooling1D, GlobalAveragePooling2D, MaxPooling1D, MaxPooling2D
@@ -128,8 +128,8 @@ def generateFeature():
     labels = []
     
     def get_all_file_in_genre(directory, genre):
-        result = os.listdir(directory + "/" + genre)
-        return map(lambda file : os.path.join(directory, genre, file), result)
+        result = os.listdir('/Users/timmy/Documents/GitHub/Astute-Music/AI training app/'+ directory + "/" + genre)
+        return map(lambda file : os.path.join('/Users/timmy/Documents/GitHub/Astute-Music/AI training app/', directory, genre, file), result)
     
     file_list = [get_all_file_in_genre(directory, genre) for genre in genres ]
     
@@ -139,7 +139,8 @@ def generateFeature():
         print("getting feature for " + "data")
         music = MP3(file_path)
         length = music.info.length
-        index = genres.index(file_path.split('\\')[1])
+        print(file_path)
+        index = genres.index(file_path.split('/')[8])
         return[length, index]
         #return \
         #    [ get_feature(file_path2, i * duration, duration, resolution) for i in range(math.floor(length / duration)) for file_path2 in file_list], \
@@ -212,8 +213,8 @@ def generateFeature():
     hours = time_now.hour
     minutes = time_now.minute
     secs = time_now.second
-    np.save(f'feature/feature{years}{months}{days}{hours}{minutes}{secs}.npy', features)
-    np.save(f'feature/label{years}{months}{days}{hours}{minutes}{secs}.npy', labels)
+    np.save(f'/Users/timmy/Documents/GitHub/Astute-Music/AI training app/feature{years}{months}{days}{hours}{minutes}{secs}.npy', features)
+    np.save(f'/Users/timmy/Documents/GitHub/Astute-Music/AI training app/label{years}{months}{days}{hours}{minutes}{secs}.npy', labels)
     print(f"used {time.time()-timecache} seconds")
     return features, labels
         
