@@ -4,7 +4,9 @@ import time
 import sys
 import select
 import threading
-from tensorflow.keras.models import load_model
+import warnings
+warnings.filterwarnings("ignore",category=UserWarning)
+
 #from keras.saving.save import load_model
 import sounddevice as sd
 import numpy as np
@@ -12,12 +14,12 @@ import librosa
 import collections
 import cv2
 from tensorflow import keras
-
 # Initialize Art-Net and Signal Generator
-target_ip = '172.20.10.13'  # Target IP
+target_ip = '172.20.10.3'  # Target IP
 universe = 0                  # Universe number
 packet_size = 512             # Packet size
 frame_rate = 40               # Frame rate (Hz)
+
 
 
 sg = sg()
@@ -35,6 +37,7 @@ packet = bytearray([0] * packet_size)
 B1, B2, B3 = 1, 2, 3
 PN1, PN2 = 17, 19
 P1, P2, P3, P4, P5, P6 = 33, 49, 65, 81, 97, 113
+#P1, P2, P3, P4, P5, P6 = 90, 105, 400, 410, 120, 135
 
 # Initialize the neural network
 #AIpath = input("Enter AI file path:").split('"')[1]
@@ -42,18 +45,21 @@ P1, P2, P3, P4, P5, P6 = 33, 49, 65, 81, 97, 113
 #network = load_model(AIpath)
 
 # Initialize the neural network
-AIpath = input("Enter AI file path:").strip()
+AIpath = input("Enter AI file path:").strip('"')
 try:
     network = keras.models.Sequential()
-    network = load_model(AIpath)
+    network.predict(np.zeros((3,3,3)))
+    network = keras.models.load_model(AIpath)
 except Exception as e:
     print(f"Error loading model: {e}")
     sys.exit(1)
 
 print(sd.query_devices())
+device_index = int(input("Enter the device index: "))
 
 # Define global variables for audio processing
 sr = 320000  # Sampling rate
+sr1 = 44100
 buffer_duration1 = 0.3  # Duration of audio chunks for AI processing
 buffer_duration2 = 2  # Duration of audio chunks for BPM detection
 hop_length = 512  # FFT hop length
@@ -61,28 +67,40 @@ threshold = 0.2  # Energy threshold for filtering silent segments
 dataNow = []
 Soundarrays = []
 
-# Define global variables for BPM processing
-bpm_buffer = collections.deque(maxlen=int(sr * buffer_duration2))  # Buffer for BPM detection
+def isStart(indata, frames, time, status):
+    global started
+    cacheStart = librosa.feature.mfcc(y=indata, sr=sr)
+    started = indata
+with sd.InputStream(callback=isStart, channels=1, samplerate=sr, blocksize=int(sr * buffer_duration1), device=device_index):
+    global started
+    started = -1
+    print("Starting Librosa services...")
+    while True:
+        if type(started) == np.ndarray:
+            print("Librosa started.")
+            break
+
 
 # Feature extraction functions (MFCC, MelSpectrogram, etc.)
 def GetMFCC(y):
-    return np.array(librosa.feature.mfcc(y=y, sr=320000))
+    return np.array(librosa.feature.mfcc(y=y, sr=320000)) #給0.3秒的音訊 得到位元率32000的頻譜圖
 
 def GetMelspectrogram(y):
-    return np.array(librosa.feature.melspectrogram(y=y, sr=320000))
+    return np.array(librosa.feature.melspectrogram(y=y, sr=320000)) #給0.3秒的音訊 得到位元率32000的頻譜圖
 
 def GetChromaVector(y):
-    return np.array(librosa.feature.chroma_stft(y=y, sr=320000))
+    return np.array(librosa.feature.chroma_stft(y=y, sr=320000)) #給0.3秒的音訊 得到位元率32000的光譜圖
 
 def GetTonnetz(y):
-    return np.array(librosa.feature.tonnetz(y=y, sr=320000), dtype='float32')
+    return np.array(librosa.feature.tonnetz(y=y, sr=320000), dtype='float32') #給0.3秒的音訊 得到位元率32000的音調圖
 
-def get_feature(y):
+def get_feature(y): 
     mfcc = GetMFCC(y)
     melspectrogram = GetMelspectrogram(y)
     chroma = GetChromaVector(y)
     tntz = GetTonnetz(y)
-    return cv2.cvtColor(np.concatenate((mfcc, melspectrogram, chroma, tntz)), cv2.COLOR_GRAY2BGR)
+    return cv2.resize(np.concatenate((mfcc, melspectrogram, chroma, tntz)), (94,94))
+    #return cv2.resize(cv2.cvtColor(np.concatenate((mfcc, melspectrogram, chroma, tntz)), cv2.COLOR_GRAY2BGR), (94,94)) #根據上述圖片 直接將四張圖拼起來 曲得特徵圖
 
 def ProcessData(nameFunc):
     global Soundarrays
@@ -90,8 +108,8 @@ def ProcessData(nameFunc):
     dataNow = []
     while True:
         if type(dataNow) == np.ndarray:
-            print("Process data")
-            Datacache = dataNow
+            #print("Process data")
+            Datacache = dataNow #防止處理時 dataNow 變更資料
             feature = get_feature(Datacache)
             Soundarrays = feature
 
@@ -99,6 +117,7 @@ def AIpredict(model, name):
     global Soundarrays
     global output
     output = -1
+    predictions = []
     Soundarrays = []
     PredictData = []
     print("AI start")
@@ -106,39 +125,53 @@ def AIpredict(model, name):
         if type(Soundarrays) == np.ndarray:
             if len(PredictData) < 4:
                 PredictData.append(Soundarrays)
-            elif len(PredictData) == 4:
-                PredictData = np.array((PredictData[1], PredictData[2], PredictData[3], Soundarrays))
-                #prediction = model.predict(PredictData)
+            elif len(PredictData) == 4: #開始預測
+                PredictData = np.array((PredictData[1], PredictData[2], PredictData[3], Soundarrays)) #PredictData 更新
                 prediction = model.predict(PredictData,verbose=0)
-                prediction = np.add(np.add(np.add(prediction[0], prediction[1]), prediction[2]), prediction[3])
-                output = prediction.tolist().index(np.max(prediction))
-                print(output)
-        
+                prediction = np.add(np.add(np.add(prediction[0], prediction[1]), prediction[2]), prediction[3]) #把機率值加起來
+                prediction_num = prediction.tolist().index(np.max(prediction)) #取得最大項
+                if len(predictions) < 6:
+                    predictions.append(prediction_num)
+                    #print(predictions)
+                elif len(predictions) == 6:
+                    print(predictions)
+                    predictions = [predictions[1],predictions[2],predictions[3],predictions[4],predictions[5],prediction_num]
+                
+                    if predictions[0] == predictions[1] and predictions[1] == predictions[2] and predictions[2] == predictions[3] and predictions[3] == predictions[4] and predictions[4] == predictions[5]:
+                	    output = prediction_num
+                
+                #print(output)
+
 
 def audio_callback(indata, frames, time, status):
     global dataNow
-    global bpm_buffer
     dataNow = np.reshape(indata, [indata.shape[0]])
-    audio_data = indata[:, 0]
-    bpm_buffer.extend(audio_data)
+
+def BPMaudio():
+    with sd.InputStream(callback=audio_callback_for_BPM, channels=1, samplerate=sr1, blocksize=int(sr1 * buffer_duration2), device=device_index):
+        print("Real-time audio processing started. Press Ctrl+C to stop.")
+        try:
+            while True:
+                sd.sleep(1000)
+        except KeyboardInterrupt:
+            print("Real-time audio processing stopped.")
 
 def detect_beats(audio_buffer):
-    tempo, beats = librosa.beat.beat_track(y=audio_buffer, sr=sr, hop_length=hop_length)
-    return tempo, beats
-
-def BPMProcessor():
     global BPM
-    bpm_buffer = collections.deque(maxlen=int(sr * buffer_duration2))  # Buffer for BPM detection
-    while True:
-        if len(bpm_buffer) == int(sr * buffer_duration2):  # Ensure enough data is present
-            audio_data = np.array(bpm_buffer)
-            #tempo, beats = detect_beats(audio_data)
-            #print(f"Detected BPM: {tempo}")
-            BPM = 120
+    # 使用 librosa 偵測節拍
+    tempo, beats = librosa.beat.beat_track(y=audio_buffer, sr=sr1, hop_length=hop_length)
+    print(f"Tempo: {tempo} BPM, Beats Detected: {len(beats)}")
+    BPM = tempo
 
-        else:
-            continue  # Wait until enough data is available
-
+def audio_callback_for_BPM(indata, frames, time, status):
+    # 將音訊數據轉為一維並標準化
+    #print("callback")
+    audio_buffer = indata[:, 0]
+    
+    # 檢查音訊能量以過濾靜音段
+    if np.max(np.abs(audio_buffer)) > threshold:
+        # 偵測節拍
+        detect_beats(audio_buffer)
 
 def check_input():
     if select.select([sys.stdin], [], [], 0)[0]:
@@ -158,13 +191,20 @@ def control_lights():
         artnet.set_single_value(i+1, 251)
         artnet.set_single_value(i+2, 179)
         artnet.set_single_value(i+3, 35)
+        #artnet.set_single_value(i-1, 255) # for 大堂
+        #artnet.set_single_value(i-4, 127) # for 大堂
+        #artnet.set_single_value(i-5, 127) # for 大堂
+
+    for i in [B1,B2,B3]:
+        artnet.set_single_value(i, 255)
+
     while True:
 
         if str(output) == user_input:
             pass
         else:
             user_input = str(output) 
-        
+
             if user_input =="bon":
                 for i in [B1,B2,B3]:
                     artnet.set_single_value(i,255)
@@ -238,8 +278,8 @@ def control_lights():
                 print("3 Can-Can 柔 bpm")
                 sg.set_generator(P1, "sin", BPM, frame_rate, offset=0)
                 sg.set_generator(P2, "sin", BPM, frame_rate, offset=0)
-                sg.set_generator(P3, "sin", BPM, frame_rate, offset=0)
-                sg.set_generator(P4, "sin", BPM, frame_rate, offset=30/BPM)
+                sg.set_generator(P4, "sin", BPM, frame_rate, offset=0)
+                sg.set_generator(P3, "sin", BPM, frame_rate, offset=30/BPM)
                 sg.set_generator(P5, "sin", BPM, frame_rate, offset=30/BPM)
                 sg.set_generator(P6, "sin", BPM, frame_rate, offset=30/BPM) 
                 effect = True
@@ -266,10 +306,10 @@ def control_lights():
                 sg.set_generator(P5, "square", flash, frame_rate, offset=0.4)
                 sg.set_generator(P6, "square", flash, frame_rate, offset=0.5) 
                 effect = True
-            
+
             elif user_input == "5":
-                #漸進漸出 慢
-                print("6 漸進漸出 慢")
+                #白光
+                print("6 白光")
                 slow = 60
                 sg.set_generator(P1, "sin", slow, frame_rate, offset=0)
                 sg.set_generator(P2, "sin", slow, frame_rate, offset=0.2)
@@ -294,7 +334,7 @@ def control_lights():
             elif user_input == "7":
                 #漸進漸出 快
                 print("8 漸進漸出 快")
-                fast = 120
+                fast = 100
                 sg.set_generator(P1, "sin", fast, frame_rate, offset=0)
                 sg.set_generator(P2, "sin", fast, frame_rate, offset=0.2)
                 sg.set_generator(P3, "sin", fast, frame_rate, offset=0.4)
@@ -305,11 +345,11 @@ def control_lights():
             else:
                 #print("No output")
                 None
-            
+
         if effect == True:
             for i in [P1,P2,P3,P4,P5,P6]:
                 artnet.set_single_value(i,sg.signal_generator(i))
-        
+
         # 保持40Hz頻率
         artnet.show()
         time.sleep(1 / frame_rate)
@@ -317,8 +357,8 @@ def control_lights():
 # Threading setup
 thread1 = threading.Thread(target=ProcessData, args=("Thread A",))
 thread2 = threading.Thread(target=AIpredict, args=(network, "Thread B"))
-thread3 = threading.Thread(target=BPMProcessor, args=())
-thread4 = threading.Thread(target=control_lights, args=())
+thread3 = threading.Thread(target=control_lights, args=())
+thread4 = threading.Thread(target=BPMaudio, args=())
 
 # Start threads
 thread1.start()
@@ -326,8 +366,9 @@ thread2.start()
 thread3.start()
 thread4.start()
 
+
 # Real-time audio recording and processing
-device_index = int(input("Enter the device index: "))
+
 with sd.InputStream(callback=audio_callback, channels=1, samplerate=sr, blocksize=int(sr * buffer_duration1), device=device_index):
     print("Real-time audio processing started. Press Ctrl+C to stop.")
     try:
