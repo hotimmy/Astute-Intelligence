@@ -1,5 +1,5 @@
 from typing import Type
-from keras.saving.save import load_model
+from tensorflow.keras.models import load_model
 import sounddevice as sd
 import numpy as np
 import librosa
@@ -8,10 +8,13 @@ import cv2
 import threading
 from tensorflow import keras
 bpm_history = collections.deque(maxlen=5)
+
+
 # 儲存最近 5 個 BPM 值
-AIpath = input("Enter AI file path:").split('"')[1]
+AIpath = input("Enter AI file path:")
 network = keras.models.Sequential()
 network = load_model(AIpath)
+
 def GetMFCC(y):
   mfcc = np.array(librosa.feature.mfcc(y=y, sr=320000))
   #mfcc = np.array(cv2.resize(mfcc, (resolution,20)))
@@ -96,11 +99,11 @@ def ProcessData(nameFunc):
     while True:
         if type(dataNow) == np.ndarray:
             Datacache = dataNow
-            print(Datacache)
-            print(Datacache.shape)
+            #print(Datacache)
+            #print(Datacache.shape)
             feature = get_feature(Datacache)
-            print(feature)
-            print(feature.shape)
+            #print(feature)
+            #print(feature.shape)
             Soundarrays = feature
 
 def AIpredict(model, name):
