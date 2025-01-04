@@ -23,7 +23,7 @@ from tensorflow import keras
 import os
 
 # Initialize Art-Net and Signal Generator
-target_ip = '172.20.10.3'  # Target IP
+target_ip = '169.254.44.100'  # Target IP
 universe = 0                  # Universe number
 packet_size = 512             # Packet size
 frame_rate = 40               # Frame rate (Hz)
@@ -69,7 +69,7 @@ print(sd.query_devices())
 lines = str(sd.query_devices()).splitlines()
 # 遍歷每一行，找出包含 "BlackHole" 的行
 for line_number, line in enumerate(lines):
-    if "BlackHole" in line:
+    if "Blackmagic" in line:
         device_index = line_number
 print(device_index)
 
@@ -83,8 +83,7 @@ threshold = 0.2  # Energy threshold for filtering silent segments
 dataNow = []
 Soundarrays = []
 
-
-
+"""
 def isStart(indata, frames, time, status):
     global started
     cacheStart = librosa.feature.mfcc(y=indata, sr=sr)
@@ -97,7 +96,7 @@ with sd.InputStream(callback=isStart, channels=1, samplerate=sr, blocksize=int(s
         if type(started) == np.ndarray:
             print("Librosa started.")
             break
-
+"""
 
 # Feature extraction functions (MFCC, MelSpectrogram, etc.)
 def GetMFCC(y):
@@ -237,7 +236,8 @@ def monitor_control_mode():
 
 def set_color():
     global color
-    if color == 0:
+    if color == 1:
+        print("Color 1")
         for i in [P1,P2,P4]:
             artnet.set_single_value(i+1, 98)
             artnet.set_single_value(i+2, 234)
@@ -246,29 +246,58 @@ def set_color():
             artnet.set_single_value(i+1, 255)
             artnet.set_single_value(i+2, 79)
             artnet.set_single_value(i+3, 255)
-    elif color == 1:
-        for i in [P1,P2,P3,P4,P5,P6]:
-            artnet.set_single_value(i+1, 251)
-            artnet.set_single_value(i+2, 179)
-            artnet.set_single_value(i+3, 35)
-    else:
-        for i in [P1,P2,P3,P4,P5,P6]:
-            artnet.set_single_value(i+1, 0)
-            artnet.set_single_value(i+2, 0)
-            artnet.set_single_value(i+3, 255)
+    elif color == 2:
+                print("Color 2")
+                for i in [P1,P2,P4]:
+                    artnet.set_single_value(i+1, 98)
+                    artnet.set_single_value(i+2, 234)
+                    artnet.set_single_value(i+3, 255)
+                for i in [P3,P5,P6]:
+                    artnet.set_single_value(i+1, 239)
+                    artnet.set_single_value(i+2, 169)
+                    artnet.set_single_value(i+3, 58)
+    elif color == 3:
+                print("Color 3")
+                for i in [P1,P2,P4,P3,P5,P6]:
+                    artnet.set_single_value(i+1, 251)
+                    artnet.set_single_value(i+2, 179)
+                    artnet.set_single_value(i+3, 35)
+    elif color == 4:
+                print("Color 4")
+                for i in [P1,P2,P4]:
+                    artnet.set_single_value(i+1, 98)
+                    artnet.set_single_value(i+2, 234)
+                    artnet.set_single_value(i+3, 255)
+                for i in [P3,P5,P6]:
+                    artnet.set_single_value(i+1, 255)
+                    artnet.set_single_value(i+2, 79)
+                    artnet.set_single_value(i+3, 255)
+    elif color == 5:
+                print("Color 5")
+                for i in [P1,P2,P4]:
+                    artnet.set_single_value(i+1, 98)
+                    artnet.set_single_value(i+2, 234)
+                    artnet.set_single_value(i+3, 255)
+                for i in [P3,P5,P6]:
+                    artnet.set_single_value(i+1, 255)
+                    artnet.set_single_value(i+2, 79)
+                    artnet.set_single_value(i+3, 255)
 
 
 def control_lights():
     global output
     global BPM
     global control_mode
+    global user_input1
     global color
     control_mode = "manual"
     output = -1
     user_input = -1
     manual_input2 = -1
+    user_input1 = -1
+    user_input2 = -1
     BPM = 120
-    color = 0
+    color = 1
     set_color()
     artnet.start()
     artnet.set(packet)
@@ -397,6 +426,7 @@ def control_lights():
                     #白光
                     print("6 白光")
                     for i in [P1,P2,P3,P4,P5,P6]:
+                        artnet.set_single_value(i, 255)
                         artnet.set_single_value(i+1, 255)
                         artnet.set_single_value(i+2, 255)
                         artnet.set_single_value(i+3, 255)
@@ -549,9 +579,11 @@ def control_lights():
                         #白光
                         print("6 白光")
                         for i in [P1,P2,P3,P4,P5,P6]:
+                            artnet.set_single_value(i, 255)
                             artnet.set_single_value(i+1, 255)
                             artnet.set_single_value(i+2, 255)
                             artnet.set_single_value(i+3, 255)
+                        
                         effect = False
                     elif manual_input == "7":
                         #漸進漸出 慢
@@ -587,6 +619,69 @@ def control_lights():
                     artnet.set_single_value(i,sg.signal_generator(i))
             artnet.show()
             time.sleep(1 / frame_rate)
+
+        if user_input1 != user_input2:
+            user_input2 = user_input1
+            if user_input1 =="bon":
+                print("bon")
+                for i in [B1,B2,B3]:
+                    artnet.set_single_value(i,255)
+
+            elif user_input1 =="boff":
+                print("boff")
+                for i in [B1,B2,B3]:
+                    artnet.set_single_value(i,0)
+
+
+            elif user_input1 == "pnon":
+                print("PN on")
+                artnet.set_single_value(PN1, 255)
+                artnet.set_single_value(PN1+1, 255)
+                artnet.set_single_value(PN2, 255)
+                artnet.set_single_value(PN2+1, 255)
+
+            elif user_input1 == "pnoff":
+                print("PN off")
+                artnet.set_single_value(PN1, 0)
+                artnet.set_single_value(PN1+1, 0)
+                artnet.set_single_value(PN2, 0)
+                artnet.set_single_value(PN2+1, 0)
+            
+            elif user_input1 == "Scene 1":
+                print("Scene 1")
+                artnet.set_single_value(i,255)
+                artnet.set_single_value(PN1, 255)
+                artnet.set_single_value(PN1+1, 255)
+                artnet.set_single_value(PN2, 255)
+                artnet.set_single_value(PN2+1, 255)
+            
+            elif user_input1 == "Color 1":
+                color = 1
+                set_color()
+            elif user_input1 == "Color 2":
+                color = 2
+                set_color()
+            elif user_input1 == "Color 3":
+                color = 3
+                set_color()
+            elif user_input1 == "Color 4":
+                color = 4
+                set_color()
+            elif user_input1 == "Color 5":
+                color = 5
+                set_color()
+            else:
+                pass
+            artnet.show()
+
+
+
+
+
+from PyQt5.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QCheckBox, 
+    QTextEdit, QLineEdit, QComboBox, QPushButton, QFileDialog
+)
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -647,42 +742,72 @@ class MainWindow(QWidget):
 
         # 4. Effect buttons area
         effect_layout = QGridLayout()
+
+        # Add Effect buttons
         for i in range(1, 11):
             button = QPushButton(f"Effect {i}")
             button.clicked.connect(self.effect_clicked)
             effect_layout.addWidget(button, (i - 1) // 5, (i - 1) % 5)
+
+        # Add bon/boff and pnon/pnoff buttons
+        bon_button = QPushButton("bon")
+        bon_button.clicked.connect(lambda: self.set_user_input("bon"))
+        boff_button = QPushButton("boff")
+        boff_button.clicked.connect(lambda: self.set_user_input("boff"))
+        pnon_button = QPushButton("pnon")
+        pnon_button.clicked.connect(lambda: self.set_user_input("pnon"))
+        pnoff_button = QPushButton("pnoff")
+        pnoff_button.clicked.connect(lambda: self.set_user_input("pnoff"))
+        effect_layout.addWidget(bon_button, 2, 0)
+        effect_layout.addWidget(boff_button, 2, 1)
+        effect_layout.addWidget(pnon_button, 2, 2)
+        effect_layout.addWidget(pnoff_button, 2, 3)
+
+        # Add Scene buttons
+        for i in range(1, 6):
+            scene_button = QPushButton(f"Scene {i}")
+            scene_button.clicked.connect(lambda _, s=i: self.set_user_input(f"Scene {s}"))
+            effect_layout.addWidget(scene_button, 3, i - 1)
+        
+        for i in range(1, 6):
+            scene_button = QPushButton(f"Color {i}")
+            scene_button.clicked.connect(lambda _, s=i: self.set_user_input(f"Color {s}"))
+            effect_layout.addWidget(scene_button, 4, i - 1)
+
         main_layout.addLayout(effect_layout)
 
         self.setLayout(main_layout)
 
     def update_control_model(self):
-        # 更新全域變數 control_mode 根據複選框的狀態
-        global control_mode  # 使用 global 關鍵字來修改全域變數
+        global control_mode
         if self.switch_toggle.isChecked():
-            control_mode = "AI"  # 如果勾選，設定為 AI 模式
+            control_mode = "AI"
         else:
-            control_mode = "manual"  # 如果未勾選，設定為手動模式
+            control_mode = "manual"
 
-        # 顯示當前模式
         self.terminal_display.append(f"Control mode: {control_mode}")
 
     def effect_clicked(self):
-        global control_mode, manual_input  # 使用 global 關鍵字來修改全域變數
-
+        global control_mode, manual_input
         sender = self.sender()
-        effect_number = str(sender.text().split()[-1])  # 取得效果的數字
-        
-        # 將 control_mode 設為 Manual，並更新 manual_input
+        effect_number = sender.text().split()[-1]
         control_mode = "manual"
         manual_input = effect_number
-
-        # 同步更新 QCheckBox 的狀態
-        self.switch_toggle.setChecked(False)  # 在手動模式下，複選框為未勾選
-
-        # 顯示當前效果和模式
+        self.switch_toggle.setChecked(False)
         self.terminal_display.append(f"Effect {effect_number} selected")
         self.terminal_display.append(f"Control mode: {control_mode}")
         self.terminal_display.append(f"Manual input: {manual_input}")
+
+    def set_user_input(self, value):
+        global user_input1
+        user_input1 = value
+        self.terminal_display.append(f"User input: {user_input1}")
+
+    def choose_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select AI File", "", "All Files (*)")
+        if file_path:
+            self.terminal_display.append(f"Selected file: {file_path}")
+
 
     def choose_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select AI File", "", "All Files (*)")

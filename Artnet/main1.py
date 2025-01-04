@@ -66,7 +66,7 @@ threshold = 0.2  # Energy threshold for filtering silent segments
 dataNow = []
 Soundarrays = []
 
-
+"""
 def isStart(indata, frames, time, status):
     global started
     cacheStart = librosa.feature.mfcc(y=indata, sr=sr)
@@ -79,28 +79,27 @@ with sd.InputStream(callback=isStart, channels=1, samplerate=sr, blocksize=int(s
         if type(started) == np.ndarray:
             print("Librosa started.")
             break
+"""
 
+def NParraymap(x):
+    return np.array((x - np.min(x)) / (np.max(x)-np.min(x)) * 255, dtype='uint8')
 
-# Feature extraction functions (MFCC, MelSpectrogram, etc.)
 def GetMFCC(y):
-    return np.array(librosa.feature.mfcc(y=y, sr=320000)) #給0.3秒的音訊 得到位元率32000的頻譜圖
+    return np.array(librosa.feature.mfcc(y=y,n_mfcc=100 , sr=320000)) #給0.3秒的音訊 得到位元率32000的頻譜圖
 
 def GetMelspectrogram(y):
     return np.array(librosa.feature.melspectrogram(y=y, sr=320000)) #給0.3秒的音訊 得到位元率32000的頻譜圖
 
 def GetChromaVector(y):
-    return np.array(librosa.feature.chroma_stft(y=y, sr=320000)) #給0.3秒的音訊 得到位元率32000的光譜圖
+    return np.array(librosa.feature.chroma_stft(y=y, sr=320000, n_chroma=24)) #給0.3秒的音訊 得到位元率32000的光譜圖
 
-def GetTonnetz(y):
-    return np.array(librosa.feature.tonnetz(y=y, sr=320000), dtype='float32') #給0.3秒的音訊 得到位元率32000的音調圖
 
 def get_feature(y): 
     mfcc = GetMFCC(y)
     melspectrogram = GetMelspectrogram(y)
     chroma = GetChromaVector(y)
-    tntz = GetTonnetz(y)
-    return cv2.resize(np.concatenate((mfcc, melspectrogram, chroma, tntz)), (94,94))
-    #return cv2.resize(cv2.cvtColor(np.concatenate((mfcc, melspectrogram, chroma, tntz)), cv2.COLOR_GRAY2BGR), (94,83)) #根據上述圖片 直接將四張圖拼起來 曲得特徵圖
+    #tntz = GetTonnetz(y)
+    return np.reshape(cv2.resize(np.concatenate((mfcc, melspectrogram, chroma)), (188,252)), (252,188,1))
 
 def ProcessData(nameFunc):
     global Soundarrays
