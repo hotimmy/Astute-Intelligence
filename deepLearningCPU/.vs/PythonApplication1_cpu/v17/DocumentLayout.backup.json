@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\deeeeeeep learning\\deepLearning_cpu\\PythonApplication1_cpu\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{736BC41C-862E-4832-9716-2C7C912ECE72}|PythonApplication1_cpu.pyproj|D:\\deeeeeeep learning\\deepLearning_cpu\\PythonApplication1_cpu\\PythonApplication1_cpu.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{736BC41C-862E-4832-9716-2C7C912ECE72}|PythonApplication1_cpu.pyproj|solutionrelative:PythonApplication1_cpu.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PythonApplication1_cpu.py",
+              "DocumentMoniker": "D:\\deeeeeeep learning\\deepLearning_cpu\\PythonApplication1_cpu\\PythonApplication1_cpu.py",
+              "RelativeDocumentMoniker": "PythonApplication1_cpu.py",
+              "ToolTip": "D:\\deeeeeeep learning\\deepLearning_cpu\\PythonApplication1_cpu\\PythonApplication1_cpu.py",
+              "RelativeToolTip": "PythonApplication1_cpu.py",
+              "ViewState": "AgIAAJ4AAAAAAAAAAAAAAKcAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2024-12-09T11:06:06.838Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
